@@ -1,0 +1,84 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: all
+  - override /model: backbone_heads
+  - override /callbacks: default
+  - override /trainer: gpu
+  - override /logger: wandb
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: "race"
+
+seed: 12345
+
+data:
+  num_workers: 4
+  root_dir: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/aligned_faces_balanced_race # old dataset + new race dataset
+  image_train_list: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/image_lists/face_debug.txt # new train list
+  image_test_list: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/image_lists/face_test.txt # default test dataset
+  mean: [129.186279296875, 104.76238250732422, 93.59396362304688] 
+  std: [1, 1, 1]
+  image_size: 256
+  crop_size: 224
+  backbone_name: ${model.backbone.name}
+
+trainer:
+  # limit_train_batches: 0.05
+  # limit_val_batches: 0.1
+  # limit_test_batches: 0.1
+  # accelerator: cpu
+  # devices: 1
+  # detect_anomaly: true
+  accelerator: gpu
+  min_epochs: 20
+  max_epochs: 100
+  gradient_clip_val: 0.5
+  
+
+
+model:
+  checkpoint_dir: /media/gnort/HDD6/Study/face-analysis-lightning/tests/
+  optimizer:
+    _target_: torch.optim.SGD
+    lr: 0.001
+    momentum: 0.9
+    weight_decay: 1e-6
+  criterion:
+    # _target_: src.losses.focal_loss.FocalLoss
+    _target_: src.losses.loss.CrossEntropyLoss
+    # gamma: 2.0
+    # alpha: [0.15, 0.15, 0.7]
+  attributes: [["race", 3]]
+  
+  race_head:
+    _target_: src.models.components.race_classifier.RaceClassifier
+    num_of_features: 2048 # 2622
+
+  backbone: 
+    _target_: src.models.components.backbone_maker.BackboneMaker  
+    name: resnet50 # timm format
+    pretrained: true
+    # Download checkpoint path from https://drive.google.com/file/d/1_iEmprqxyQEMMQP-moisaRRsx9LtSXF_/view?usp=drive_link
+    # checkpoint_path: /media/gnort/HDD6/Study/face-analysis-lightning/weights/VGG_Face.pt
+
+callbacks:
+  early_stopping:
+    mode: "max"
+  
+# logger:
+#   wandb:
+#     tags: ${tags}
+#     group: "f_all"
+#   aim:
+#     experiment: "f_all"
+
+logger: null
+
+
+

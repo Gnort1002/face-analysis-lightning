@@ -1,0 +1,26 @@
+_target_: src.models.face_module.FaceLitModule
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.1
+  patience: 10
+
+net:
+  _target_: src.models.components.face_attrs_classifier.FaceAttrsClassifier  
+  backbone: resnet50
+
+# compile model for faster training with pytorch 2.0
+compile: false
+
+num_classes: [4, 2, 6, 4, 7, 2] #race, gender, age, skintone, emotions, masked
+num_heads: 6
+attributes: ["race","gender","age","skintone","emotion","masked"]
+

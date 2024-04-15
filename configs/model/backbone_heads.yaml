@@ -1,0 +1,70 @@
+_target_: src.models.face_custom_module.FaceCustomLitModule
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.1
+  patience: 5
+
+# backbone:
+#   _target_: src.models.components.backbone_maker.BackboneMaker  
+#   name: resnet50 # timm format
+#   pretrained: true
+#   checkpoint_path: null
+
+backbone:
+  _target_: src.models.components.backbone_maker.BackboneMaker
+  name: resnet50 # timm format
+  pretrained: true
+  checkpoint_path:  #/media/gnort/HDD6/Downloads_New/Compress/archive/resnet50_ft_dag.pth
+
+age_head:
+  _target_: src.models.components.age_classifier.AgeClassifier 
+  output_size: 6
+
+gender_head:
+  _target_: src.models.components.gender_classifier.GenderClassifier
+  output_size: 2
+
+race_head:
+  _target_: src.models.components.race_classifier.RaceClassifier
+  output_size: 3
+
+skintone_head:
+  _target_: src.models.components.skintone_classifier.SkintoneClassifier
+  output_size: 4
+
+emotion_head:
+  _target_: src.models.components.emotion_classifier.EmotionClassifier
+  output_size: 7
+
+masked_head:
+  _target_: src.models.components.masked_classifier.MaskedClassifier
+  output_size: 2
+
+# criterion:
+#   _target_: src.losses.focal_loss.FocalLoss
+  # gamma: 2.0
+  # alpha: [0.15, 0.15, 0.7]
+
+criterion:
+  _target_: src.losses.loss.BCELoss
+
+
+
+# compile model for faster training with pytorch 2.0
+compile: false
+
+# attributes: [["race", 3], ["gender", "2"], ["age", 6],
+#              ["skintone", 4], ["emotion", 7], ["masked", 2]] 
+attributes: [["gender", 2]]
+checkpoint_dir: ${callbacks.model_checkpoint.dirpath}
+
+

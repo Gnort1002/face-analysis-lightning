@@ -1,0 +1,15 @@
+_target_: src.data.face_datamodule.FaceDataModule
+img_dir: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/cropped_faces
+image_train_list: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/image_lists/face_train.txt
+image_test_list: /media/gnort/HDD6/Study/face-analysis-lightning/dataset/face/image_lists/face_test.txt
+# mean: [0.485, 0.456, 0.406]
+# std: [0.229, 0.224, 0.225]
+mean: [0.5, 0.5, 0.5]
+std: [0.5, 0.5, 0.5]
+image_size: 256
+crop_size: 224
+batch_size: 32 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+val_test_split: [0.5, 0.5]
+num_workers: 8
+pin_memory: False
+# attrs: 'gender' # gender, race, skintone, emotions, masked

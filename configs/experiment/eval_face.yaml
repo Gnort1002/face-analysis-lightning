@@ -1,0 +1,18 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: all # choose datamodule with `test_dataloader()` for evaluation
+  - model: all
+  - logger: wandb
+  - trainer: gpu
+  - paths: default
+  - extras: default
+  - hydra: default
+
+task_name: "eval"
+
+tags: ["all", "all_classifier"]
+
+# passing checkpoint path is necessary for evaluation
+ckpt_path: "/media/gnort/HDD6/Study/face-analysis-lightning/logs/train/runs/2024-01-09_09-19-55/checkpoints/epoch_022.ckpt"
